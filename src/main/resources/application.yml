@@ -1,0 +1,49 @@
+server:
+  port: 8091
+
+spring:
+    profiles:
+      active: test
+    datasource:
+      username: sa
+      password: P@ssw0rd@0nline
+      url: jdbc:sqlserver://hinawi2.dyndns.org;databaseName=webdemo
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    jpa:
+      show-sql: true
+      hibernate:
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    rabbitmq:
+      host: eagle.rmq.cloudamqp.com
+      username: ejqohkiy
+      password: nSYDI4Enm8lBgUOwyFqRHTrexttBUJr4
+      port: 5672
+      virtual-host: ejqohkiy
+    mail:
+      host: smtp.gmail.com
+      username: chadirahme@dsb.edu.lb
+      password: nadia@dsb
+      protocol: smtp
+      port: 587
+    data:
+      rest:
+        base-path: /rest
+
+tweet:
+  socical:
+    twitter:
+      appId: SdDye6PzOSuOXpmVeJ5W3cvuQ
+      appSecret: HY8EynHkHQahtORWj8umt1qxXqXjeigjXT9nsJp27g4bgcPJGM
+      accessToken: 102929812-pcAGp6EpoocFlrUdpCkjhpN2RKeqseqXZm2DTjLZ
+      accessTokenSecret: sGeltQVm653cPPW7KfFhVguFRV49gPLwx3WLgTT5CWy0Z
+
+#spring.social.twitter.appId=realConsumerKeyHere
+#spring.social.twitter.appSecret=realConsumerSecretHere
+
+chadi:
+  rabbitmq:
+    exchange: chadi.exchange
+    queue: chadi.queue
+    routingkey: chadi.routingkey
+    receivequey: chadi.receive
