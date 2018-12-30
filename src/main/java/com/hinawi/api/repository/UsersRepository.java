@@ -15,6 +15,9 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface UsersRepository extends JpaRepository<Users,Long>,
         QuerydslPredicateExecutor<Users>,QuerydslBinderCustomizer<QUsers> {
 
+   // Users findByUserNameAndPassword(String userName , String password);
+    Users findByEmailAndPassword(String email , String password);
+
     @Override
     default public void customize(QuerydslBindings bindings, QUsers user) {
         bindings.bind(user.userName).first(

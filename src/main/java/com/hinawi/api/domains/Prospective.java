@@ -7,21 +7,21 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Customer")
+@Table(name = "Prospective")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Customers {
+public class Prospective {
 
     @Id
-    @Column(name="cust_Key")
+    @Column(name="RecNo")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long custKey;
+    private Long recNo;
 
     @Column(name="name")
     private String name;
 
-    @Column(name="arname")
+    @Column(name="arabic")
     private String arName;
 
     @Column(name="fullname")
@@ -36,6 +36,16 @@ public class Customers {
     @Column(name="email")
     private String email;
 
-    @Column(name="totalBalance")
-    private Double balance;
+    @Column(name="note")
+    private String note;
+
+    @Column(name="contact")
+    private String contact;
+
+    @Column(name="telephone1")
+    private String telephone1;
+
+    @Column(name="telephone2")
+    private String telephone2;
+
 }

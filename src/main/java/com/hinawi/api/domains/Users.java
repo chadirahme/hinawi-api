@@ -27,4 +27,12 @@ public class Users {
 
     @Column(name="email")
     private String email;
+
+    @Column(name="userPassword")
+    private String password;
+
+    public Users(String userName , String password) {
+        this.userName = userName;
+        this.password = password;
+    }
 }
