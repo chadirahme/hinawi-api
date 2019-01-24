@@ -14,5 +14,16 @@ public interface Constants {
     static final String VENDORS_BALANCE = "/vendorsBalance";
     static final String CUSTOMERS_BALANCE = "/customersBalance";
 
+    static final String STUDENTS_LIST = "/studentsList";
     static final String ADD_RANDOM_STUDENTS = "/addRandomStudents";
+
+    static final String MESSAGES_LIST = "/messagesList";
+    static final String ADD_MESSAGE = "/addMessage";
+
+    static final String ADD_WEBDASHBOARD = "/addWebDashBoard";
+    static final String DELETE_WEBDASHBOARD = "/deleteWebDashBoard";
+    static final String GET_USERWEBDASHBOARD = "/getUserDashboards";
+
+
+    //"v=spf1 mx -all"
 }

@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -106,6 +108,19 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value= Constants.STUDENTS_LIST, method= RequestMethod.GET)
+    public ApiResponse<List<Students>> getStudentsList() {
+        try {
+
+            return new ApiResponse<>(HttpStatus.OK.value(), "Students List fetched successfully.", userService.getStudents());
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+        }
+    }
+
     @RequestMapping(value= Constants.ADD_RANDOM_STUDENTS, method= RequestMethod.GET)
     public ApiResponse<Integer> addRandomStudents() {
         try {
@@ -153,5 +168,68 @@ public class UserController {
             }
         }
         return builder.toString();
+    }
+
+
+    @RequestMapping(value= Constants.MESSAGES_LIST, method= RequestMethod.GET)
+    public ApiResponse<List<WebMessages>> getMessagesList() {
+        try {
+
+            return new ApiResponse<>(HttpStatus.OK.value(), "messagesList fetched successfully.", userService.getWebMessages());
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+        }
+    }
+
+    @RequestMapping(value= Constants.GET_USERWEBDASHBOARD, method= RequestMethod.GET)
+    public ApiResponse<List<WebMessages>> getUserDashboard(@RequestParam("userId") Integer userId) {
+        try {
+
+            return new ApiResponse<>(HttpStatus.OK.value(), "dashbard fetched successfully.", userService.getUserDashboards(userId));
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+        }
+    }
+
+    @RequestMapping(value= Constants.ADD_WEBDASHBOARD, method= RequestMethod.POST)
+    public ApiResponse<WebDashboard> addWebDashBoard(@RequestBody WebDashboard webDashboard) {
+        // UserDto userDto=UserConverter.entityToDto(users);
+        try {
+
+            WebDashboard oldWebDashboard =userService.getWebDashboardByName(webDashboard);
+            if(oldWebDashboard!=null){
+                oldWebDashboard.setDashOrder(webDashboard.getDashOrder());
+                userService.addWebDashboard(oldWebDashboard);
+
+            }else {
+                WebDashboard dbWebDashboard = userService.addWebDashboard(webDashboard);
+            }
+            return new ApiResponse<>(HttpStatus.OK.value(), "WebDashboard added successfully.", webDashboard);
+
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+        }
+    }
+
+    @RequestMapping(value= Constants.DELETE_WEBDASHBOARD, method= RequestMethod.POST)
+    public ApiResponse<WebDashboard> deleteWebDashBoard(@RequestBody WebDashboard webDashboard) {
+        try {
+
+            WebDashboard dbWebDashboard = userService.deleteWebDashboard(webDashboard);
+            return new ApiResponse<>(HttpStatus.OK.value(), "WebDashboard deleted successfully.", dbWebDashboard);
+
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+        }
     }
 }

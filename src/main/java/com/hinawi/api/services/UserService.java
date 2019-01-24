@@ -16,6 +16,15 @@ public interface UserService {
     List<Vendors> getVendorsBalance();
     List<Customers> getCustomersBalance();
 
+    List<Students> getStudents();
     Students addStudents(Students students);
     Integer addListStudents(List<Students> students);
+
+    List<WebMessages> getWebMessages();
+    WebMessages addWebMessages(WebMessages webMessages);
+
+    List<WebDashboard> getUserDashboards(Integer userid);
+    WebDashboard getWebDashboardByName(WebDashboard webDashboard);
+    WebDashboard addWebDashboard(WebDashboard webDashboard);
+    WebDashboard deleteWebDashboard(WebDashboard webDashboard);
 }

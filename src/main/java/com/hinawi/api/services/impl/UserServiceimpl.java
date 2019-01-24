@@ -22,6 +22,10 @@ public class UserServiceimpl implements UserService {
     VendorsRepository vendorsRepository;
     @Autowired
     StudentsRepository studentsRepository;
+    @Autowired
+    WebMessagesRepository webMessagesRepository;
+    @Autowired
+    WebDashboardRepository webDashboardRepository;
 
     @Override
     public UserDto loginUser(UserDto userDto) {
@@ -60,6 +64,16 @@ public class UserServiceimpl implements UserService {
     }
 
     @Override
+    public List<WebMessages> getWebMessages() {
+        return webMessagesRepository.findAll();
+    }
+
+    @Override
+    public List<Students> getStudents() {
+        return studentsRepository.findAll();
+    }
+
+    @Override
     public Students addStudents(Students students) {
         return studentsRepository.save(students);
     }
@@ -68,5 +82,33 @@ public class UserServiceimpl implements UserService {
        // Iterable<Students> iterable = students;
          studentsRepository.saveAll(students);
          return students.size();
+    }
+
+
+    @Override
+    public WebMessages addWebMessages(WebMessages webMessages) {
+        return webMessagesRepository.save(webMessages);
+    }
+
+    @Override
+    public WebDashboard addWebDashboard(WebDashboard webDashboard) {
+        return webDashboardRepository.save(webDashboard);
+    }
+
+    @Override
+    public WebDashboard deleteWebDashboard(WebDashboard webDashboard) {
+        List<WebDashboard> lst= webDashboardRepository.findByUserIdAndDashName(webDashboard.getUserId() , webDashboard.getDashName());
+        webDashboardRepository.deleteAll(lst);
+        return null;
+    }
+
+    @Override
+    public List<WebDashboard> getUserDashboards(Integer userid) {
+        return webDashboardRepository.findByUserIdOrderByDashOrder(userid);
+    }
+
+    @Override
+    public WebDashboard getWebDashboardByName(WebDashboard webDashboard) {
+        return webDashboardRepository.findByDashName(webDashboard.getDashName());
     }
 }
