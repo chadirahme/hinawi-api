@@ -12,6 +12,7 @@ public interface UserService {
     List<Customers> getCustomers();
     List<Prospective> getProspectives();
     List<Vendors> getVendors();
+    List<MobileAttendance> getMobileAttendance();
 
     List<Vendors> getVendorsBalance();
     List<Customers> getCustomersBalance();
@@ -24,7 +25,10 @@ public interface UserService {
     WebMessages addWebMessages(WebMessages webMessages);
 
     List<WebDashboard> getUserDashboards(Integer userid);
+    WebDashboard getWebDashboardByNameAndUser(WebDashboard webDashboard);
     WebDashboard getWebDashboardByName(WebDashboard webDashboard);
     WebDashboard addWebDashboard(WebDashboard webDashboard);
     WebDashboard deleteWebDashboard(WebDashboard webDashboard);
+
+    MobileAttendance addMobileAttendance(MobileAttendance mobileAttendance);
 }

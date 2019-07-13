@@ -6,8 +6,10 @@ import com.hinawi.api.dto.UserDto;
 import com.hinawi.api.repository.*;
 import com.hinawi.api.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -26,6 +28,8 @@ public class UserServiceimpl implements UserService {
     WebMessagesRepository webMessagesRepository;
     @Autowired
     WebDashboardRepository webDashboardRepository;
+    @Autowired
+    MobileAttendanceRepository mobileAttendanceRepository;
 
     @Override
     public UserDto loginUser(UserDto userDto) {
@@ -51,6 +55,11 @@ public class UserServiceimpl implements UserService {
     @Override
     public List<Vendors> getVendors() {
         return vendorsRepository.findAll();
+    }
+
+    @Override
+    public List<MobileAttendance> getMobileAttendance() {
+        return mobileAttendanceRepository.findAll(new Sort(Sort.Direction.DESC, "attendId"));
     }
 
     @Override
@@ -106,9 +115,36 @@ public class UserServiceimpl implements UserService {
     public List<WebDashboard> getUserDashboards(Integer userid) {
         return webDashboardRepository.findByUserIdOrderByDashOrder(userid);
     }
+    @Override
+    public WebDashboard getWebDashboardByNameAndUser(WebDashboard webDashboard) {
+        List<WebDashboard> lst= webDashboardRepository.findByUserIdAndDashName(webDashboard.getUserId(),webDashboard.getDashName());
+        if(!lst.isEmpty()){
+            return lst.get(0);
+        }
+        return null;
+    }
 
     @Override
     public WebDashboard getWebDashboardByName(WebDashboard webDashboard) {
         return webDashboardRepository.findByDashName(webDashboard.getDashName());
+    }
+    @Override
+    public MobileAttendance addMobileAttendance(MobileAttendance mobileAttendance){
+        // java.util.Date
+        java.util.Date currentDate = Calendar.getInstance().getTime();
+
+        List<MobileAttendance>  lst= mobileAttendanceRepository.findLastVisit(mobileAttendance.getUserId());
+        if(lst!=null && lst.size()>0){
+            MobileAttendance mobileAttendance1=lst.get(0);
+            mobileAttendance1.setCheckoutTime(currentDate);
+            mobileAttendance1.setCheckoutNote(mobileAttendance.getCheckinNote());
+            mobileAttendanceRepository.save(mobileAttendance1);
+        }
+       else {
+            mobileAttendance.setCheckinTime(currentDate);
+            mobileAttendanceRepository.save(mobileAttendance);
+        }
+
+        return mobileAttendance;
     }
 }

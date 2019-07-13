@@ -34,7 +34,7 @@ public class UserController {
             if (dbUser == null) {
                 return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), "User not found !!.", dbUser);
             } else if (dbUser.getUserId() > 0)
-                return new ApiResponse<>(HttpStatus.OK.value(), "User list fetched successfully.", dbUser);
+                return new ApiResponse<>(HttpStatus.OK.value(), "User list fetched successfully.", dbUser,true);
             else
                 return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), "User not found !!.", dbUser);
         }
@@ -81,6 +81,20 @@ public class UserController {
             return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
         }
     }
+
+    @RequestMapping(value= Constants.MOBILE_ATTENDANCE, method= RequestMethod.GET)
+    public ApiResponse<List<MobileAttendance>> getMobileAttendace() {
+        try {
+
+            return new ApiResponse<>(HttpStatus.OK.value(), "Mobile list fetched successfully.", userService.getMobileAttendance());
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+        }
+    }
+
 
     @RequestMapping(value= Constants.VENDORS_BALANCE, method= RequestMethod.GET)
     public ApiResponse<List<Vendors>> getVendorsBalance() {
@@ -200,7 +214,7 @@ public class UserController {
         // UserDto userDto=UserConverter.entityToDto(users);
         try {
 
-            WebDashboard oldWebDashboard =userService.getWebDashboardByName(webDashboard);
+            WebDashboard oldWebDashboard = userService.getWebDashboardByNameAndUser(webDashboard);//userService.getWebDashboardByName(webDashboard);
             if(oldWebDashboard!=null){
                 oldWebDashboard.setDashOrder(webDashboard.getDashOrder());
                 userService.addWebDashboard(oldWebDashboard);
@@ -225,6 +239,19 @@ public class UserController {
             WebDashboard dbWebDashboard = userService.deleteWebDashboard(webDashboard);
             return new ApiResponse<>(HttpStatus.OK.value(), "WebDashboard deleted successfully.", dbWebDashboard);
 
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+        }
+    }
+
+    @RequestMapping(value= "/addMobileAttendance", method= RequestMethod.POST)
+    public ApiResponse<WebDashboard> addMobileAttendance(@RequestBody MobileAttendance mobileAttendance) {
+        try {
+            userService.addMobileAttendance(mobileAttendance);
+            return new ApiResponse<>(HttpStatus.OK.value(), "WebDashboard added successfully.", mobileAttendance);
         }
         catch (Exception ex)
         {

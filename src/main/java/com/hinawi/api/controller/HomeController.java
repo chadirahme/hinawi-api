@@ -14,12 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/home/")
 public class HomeController {
-
-
     @GetMapping(value = "/test")
     public String test(@RequestParam("name") String name) {
         return "Message sent to the RabbitMQ JavaInUse Successfully";
     }
-
 
 }

@@ -17,4 +17,11 @@ public class ApiResponse<T> {
         this.message = message;
         this.result = result;
     }
+
+    public ApiResponse(int status, String message, Object result,boolean success) {
+        this.status = status;
+        this.message = message;
+        this.result = result;
+        this.success=success;
+    }
 }

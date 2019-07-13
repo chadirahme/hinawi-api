@@ -24,6 +24,7 @@ public interface Constants {
     static final String DELETE_WEBDASHBOARD = "/deleteWebDashBoard";
     static final String GET_USERWEBDASHBOARD = "/getUserDashboards";
 
+    static final String MOBILE_ATTENDANCE = "/mobileAttendance";
 
     //"v=spf1 mx -all"
 }
