@@ -11,7 +11,11 @@ public class UserDto {
     String email;
     //List<SkillDto> skillDtos= new ArrayList<>();
     String password;
+    String token;
 
+    public UserDto(){
+
+    }
     public UserDto(Long userId, String userName,String email) {
         this.userId = userId;
         this.userName = userName;

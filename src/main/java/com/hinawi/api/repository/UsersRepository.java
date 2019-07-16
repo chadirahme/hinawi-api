@@ -15,6 +15,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface UsersRepository extends JpaRepository<Users,Long>,
         QuerydslPredicateExecutor<Users>,QuerydslBinderCustomizer<QUsers> {
 
+    Users findByEmail(String email);
    // Users findByUserNameAndPassword(String userName , String password);
     Users findByEmailAndPassword(String email , String password);
 

@@ -7,6 +7,7 @@ public interface Constants {
     static final String GET_USER_BY_ID = "/getUser/{userId}";
     static final String GET_ALL_USERS = "/getAllUsers";
     static final String SAVE_USER = "/saveUser";
+    static final String AUTHENTICATE="/authenticate";
     static final String LOGIN_USER = "/loginUser";
     static final String CUSTOMERS_LIST = "/customersList";
     static final String PROSPECTIVE_LIST = "/prospectiveList";
