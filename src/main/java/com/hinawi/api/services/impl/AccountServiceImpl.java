@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     CheckMastRepository checkMastRepository;
+
+    @PersistenceContext
+    private EntityManager _entityManager;
+
 
     @Override
     public List<ChequeModel> getChequesUnderCollectionList() {
@@ -42,7 +48,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<Checkmast> getPettyCashList() {
-        return checkMastRepository.findAll(new Sort(Sort.Direction.DESC, "pvDate"));
+        //return checkMastRepository .findAll(new Sort(Sort.Direction.DESC, "pvDate"));
+        return _entityManager.createNamedQuery(Checkmast.QUERY_GET_ALL).getResultList();//. .findAll(new Sort(Sort.Direction.DESC, "pvDate"));
     }
 
     @Override

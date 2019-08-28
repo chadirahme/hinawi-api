@@ -9,5 +9,6 @@ public interface ListService {
 
     List<HRListFields> getHRListFields();
     List<HRListValues> getHRListValues(Long fieldId);
+    List<HRListValues> getHRSubListValues(Long fieldId,Integer subId);
     HRListValues saveHRListValues(HRListValues hrListValues);
 }

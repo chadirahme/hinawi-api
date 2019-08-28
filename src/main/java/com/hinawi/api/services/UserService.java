@@ -31,4 +31,7 @@ public interface UserService {
     WebDashboard deleteWebDashboard(WebDashboard webDashboard);
 
     MobileAttendance addMobileAttendance(MobileAttendance mobileAttendance);
+    Prospective saveProspectives(Prospective prospective);
+    List<ProspectiveCotact> getProspectiveContacts(long recNo);
+    ProspectiveCotact saveProspectiveContacts(ProspectiveCotact prospectiveCotact);
 }

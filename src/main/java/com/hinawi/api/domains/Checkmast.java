@@ -11,12 +11,18 @@ import java.util.Date;
 
 @Entity
 @Table(name = "Checkmast")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "PayeeType", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
 @NoArgsConstructor
+@NamedQueries({
+        @NamedQuery(name=Checkmast.QUERY_GET_ALL, query = "SELECT check FROM Checkmast check order by printName asc")
+})
 public class Checkmast {
 
     //PrintName,Memo,CheckNo,CheckDate,swiftCode,Cheque from Checkmast order by PVDate desc
+    public static final String QUERY_GET_ALL = "AnsweredQuestionnaireEntity.getAll";
 
     @Id
     @Column(name="RecNo")
@@ -30,7 +36,7 @@ public class Checkmast {
     @Column(name="pvDate")
     private Date pvDate;
 
-    @Column(name="PayeeType")
+    @Column(name="PayeeType",insertable = false, updatable = false)
     private String payeeType;
 
     @Column(name="Amount")

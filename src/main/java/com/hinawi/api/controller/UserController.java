@@ -69,6 +69,47 @@ public class UserController {
             return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
         }
     }
+
+    @RequestMapping(value= Constants.PROSPECTIVE_CONTACTS_LIST, method= RequestMethod.GET)
+    public ApiResponse<List<ProspectiveCotact>> getProspectiveContacts(@RequestParam("recNo") long recNo) {
+        try {
+
+            return new ApiResponse<>(HttpStatus.OK.value(), "Prospective list fetched successfully.", userService.getProspectiveContacts(recNo));
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+        }
+    }
+
+    @RequestMapping(value= "/saveProspectives", method= RequestMethod.POST)
+    public ApiResponse<Prospective> saveProspectives(@RequestBody Prospective prospective) {
+        try {
+            userService.saveProspectives(prospective);
+            return new ApiResponse<>(HttpStatus.OK.value(), "Prospective saved successfully.", prospective);
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+        }
+    }
+
+    @RequestMapping(value= "/saveProspectiveContact", method= RequestMethod.POST)
+    public ApiResponse<ProspectiveCotact> saveProspectives(@RequestBody ProspectiveCotact prospectiveCotact) {
+        try {
+            userService.saveProspectiveContacts(prospectiveCotact);
+            return new ApiResponse<>(HttpStatus.OK.value(), "Prospective saved successfully.", prospectiveCotact);
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+        }
+    }
+
+
     @RequestMapping(value= Constants.VENDORS_LIST, method= RequestMethod.GET)
     public ApiResponse<List<Vendors>> getVendors() {
         try {

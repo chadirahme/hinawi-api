@@ -47,3 +47,6 @@ chadi:
     queue: chadi.queue
     routingkey: chadi.routingkey
     receivequey: chadi.receive
+
+jwt:
+  secret: javainuse

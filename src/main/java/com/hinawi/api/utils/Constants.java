@@ -11,6 +11,8 @@ public interface Constants {
     static final String LOGIN_USER = "/loginUser";
     static final String CUSTOMERS_LIST = "/customersList";
     static final String PROSPECTIVE_LIST = "/prospectiveList";
+    static final String PROSPECTIVE_CONTACTS_LIST = "/prospectiveContactsList";
+
     static final String VENDORS_LIST = "/vendorsList";
     static final String VENDORS_BALANCE = "/vendorsBalance";
     static final String CUSTOMERS_BALANCE = "/customersBalance";
