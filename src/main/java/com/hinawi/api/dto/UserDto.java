@@ -12,6 +12,7 @@ public class UserDto {
     //List<SkillDto> skillDtos= new ArrayList<>();
     String password;
     String token;
+    String role;
 
     public UserDto(){
 

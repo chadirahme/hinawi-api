@@ -26,9 +26,9 @@ public class HRListFields {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fieldId;
 
-    @Column(name="ID")
+    //@Column(name="ID")
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    //private Integer id;
 
     @Column(name="PARENT_LIST")
     private Integer parentListId;

@@ -72,11 +72,18 @@ public class Prospective {
     @Column(name="Sublevel")
     private Integer sublevel;
 
+    @Column(name="ParentRefKey")
+    private Integer parentRefKey;
+
+
     @Column(name="PriorityID")
     private Integer priorityID;
 
     @Column(name="CompanyTypeRefKey")
     private Integer companyTypeRefKey;
+
+    @Column(name="CompanySizeRefKey")
+    private Integer companySizeRefKey;
 
     @Column(name="CountryRefKey")
     private Integer countryRefKey;
@@ -102,6 +109,46 @@ public class Prospective {
     @Transient
     private List<ProspectiveCotact> lstProspectiveCotact;
 
+
+    @Column(name="SoftwareRefKey")
+    private Integer softwareRefKey;
+
+    @Column(name="UserNos")
+    private Integer userNos;
+
+    @Column(name="EmpNos")
+    private Integer empNos;
+
+    @Column(name="Ownername")
+    private String ownername;
+
+    @Column(name="ManagerName")
+    private String managerName;
+
+    @Column(name="AuditorName")
+    private String auditorName;
+
+    @Column(name="AccountantName")
+    private String accountantName;
+
+    @Column(name="LastTrialBalance")
+    private Date lastTrialBalance;
+
+    @Column(name="WorkingHrs")
+    private Integer workingHrs;
+
+    @Column(name="SalesRepKey")
+    private Integer salesRepKey;
+
+    @Column(name="InterestLevel")
+    private String interestLevel;
+
+
+    @Column(name="Address1")
+    private String poBox;
+
+    @Column(name="Address2")
+    private String zipCode;
 
 //    @Column(name="altcontact")
 //    private String altcontact;

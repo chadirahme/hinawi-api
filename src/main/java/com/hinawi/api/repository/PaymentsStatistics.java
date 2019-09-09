@@ -6,4 +6,5 @@ package com.hinawi.api.repository;
 public interface PaymentsStatistics {
     Double getTotal();
     int getPaymonth();
+    String getStatus();
 }

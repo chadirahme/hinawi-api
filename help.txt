@@ -1,3 +1,6 @@
 https://vladmihalcea.com/the-best-way-to-map-a-composite-primary-key-with-jpa-and-hibernate/
 @Entity
 @Table(name = "OUT_BATCH")
+
+validate a List of objects as a parameter to a Spring controller.
+https://www.baeldung.com/spring-validate-list-controller

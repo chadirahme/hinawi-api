@@ -3,8 +3,10 @@ package com.hinawi.api.services.impl;
 import com.hinawi.api.domains.HRListFields;
 import com.hinawi.api.domains.HRListValues;
 import com.hinawi.api.domains.MultilingualText;
+import com.hinawi.api.domains.SalesRep;
 import com.hinawi.api.repository.HRListFieldsRepository;
 import com.hinawi.api.repository.HRListValuesRepository;
+import com.hinawi.api.repository.SalesRepRepository;
 import com.hinawi.api.services.ListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -27,6 +29,9 @@ public class ListServiceImpl implements ListService {
 
     @Autowired
     HRListValuesRepository hrListValuesRepository;
+
+    @Autowired
+    SalesRepRepository salesRepRepository;
 
     @Override
     public List<HRListFields> getHRListFields() {
@@ -78,5 +83,10 @@ public class ListServiceImpl implements ListService {
         return hrListValuesRepository.save(hrListValues);
         //hrListValuesRepository.save(hrListValues.get_disclaimer());
         //return hrListValues;
+    }
+
+    @Override
+    public List<SalesRep> getSalesRepList() {
+        return salesRepRepository.findAll();
     }
 }

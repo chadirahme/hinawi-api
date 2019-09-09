@@ -19,6 +19,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,7 +30,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin
+//@CrossOrigin
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("api/")
 public class JwtAuthenticationController {
 
@@ -93,6 +96,12 @@ public class JwtAuthenticationController {
                 userDto.setEmail(users.getEmail());
                 userDto.setUserId(dbUsers.getUserId());
                 userDto.setToken(token);
+                GrantedAuthority simpleGrantedAuthority= userDetails.getAuthorities().stream().findFirst().orElse(null);
+                if(simpleGrantedAuthority!=null)
+                userDto.setRole(simpleGrantedAuthority.getAuthority());
+                else
+                    userDto.setRole("");
+
                 return new ApiResponse<>(HttpStatus.OK.value(), "User list fetched successfully.", userDto, true);
             }
             else

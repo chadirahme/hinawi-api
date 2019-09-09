@@ -165,9 +165,11 @@ public class UserServiceimpl implements UserService {
             prospective.setRecNo(prospectiveRepository.getMaxId()+1);
         }
         prospectiveRepository.save(prospective);
-        for (ProspectiveCotact contact: prospective.getLstProspectiveCotact()) {
-            contact.getProspectiveCotactId().setRecNo(prospective.getRecNo());
-            saveProspectiveContacts(contact);
+        if(prospective.getLstProspectiveCotact()!=null) {
+            for (ProspectiveCotact contact : prospective.getLstProspectiveCotact()) {
+                contact.getProspectiveCotactId().setRecNo(prospective.getRecNo());
+                saveProspectiveContacts(contact);
+            }
         }
         return prospective;
     }
