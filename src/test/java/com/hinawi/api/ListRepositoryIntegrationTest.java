@@ -64,7 +64,7 @@ public class ListRepositoryIntegrationTest {
         hrListFields=new HRListFields();
         hrListFields.setFieldId(2l);
         lst.add(hrListFields);
-        when(hrListValuesRepository.getMaxId()).thenReturn(2L);
+       // when(hrListValuesRepository.getMaxId()).thenReturn(2L);
         when(listService.getHRListFields()).thenReturn(lst);
 
 

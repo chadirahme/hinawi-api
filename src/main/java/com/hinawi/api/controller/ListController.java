@@ -35,6 +35,13 @@ public class ListController {
     @Autowired
     CustomerStatusHistoryRepository customerStatusHistoryRepository;
 
+    @RequestMapping(path = "/GetCities", produces = "application/json; charset=UTF-8")
+   // @ResponseBody
+    public List<HRListValues> findCities(Double rating) {
+       // var cities = (List<City>) cityService.findAll();
+        return hrListValuesRepository.findAll();
+    }
+
     //http://localhost:8091/api/list/maxid/1
     @RequestMapping(value = "maxid/{id}", method = RequestMethod.GET)
     public long getMax(@PathVariable Long id) {

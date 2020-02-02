@@ -56,8 +56,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable()
                 // dont authenticate this particular request and OPTIONS need for Angular
                 .authorizeRequests().antMatchers("/api/authenticate").
-                 permitAll().antMatchers(HttpMethod.OPTIONS, "/**")
-                .permitAll().
+                 permitAll().antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                 .antMatchers("/ws/**").permitAll().
                 // all other requests need to be authenticated
                         anyRequest().authenticated().and().
                 // make sure we use stateless session; session won't be used to
@@ -72,6 +72,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     //use to disbale security
 //    @Override
 //    protected void configure(HttpSecurity httpSecurity) throws Exception {
+//        //curl -X POST localhost:8091/actuator/shutdown
+//        //to allow this work
+//        httpSecurity.csrf().disable();
 //        httpSecurity.authorizeRequests().antMatchers("/").permitAll();
 //    }
 

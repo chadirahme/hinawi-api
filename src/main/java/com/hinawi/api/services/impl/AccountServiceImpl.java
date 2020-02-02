@@ -5,6 +5,7 @@ import com.hinawi.api.domains.Checkmast;
 import com.hinawi.api.dto.ChequeModel;
 import com.hinawi.api.repository.CheckMastRepository;
 import com.hinawi.api.repository.PaymentsStatistics;
+import com.hinawi.api.repository.QuotationRepository;
 import com.hinawi.api.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -24,6 +25,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     CheckMastRepository checkMastRepository;
+
+    @Autowired
+    QuotationRepository quotationRepository;
 
     @PersistenceContext
     private EntityManager _entityManager;
@@ -83,6 +87,18 @@ public class AccountServiceImpl implements AccountService {
             }
         });
         return matchingObject;
+    }
+
+    @Override
+    public List<PaymentsStatistics> findAllQuotationByYear(Integer year) {
+        //int month=1;
+        List<PaymentsStatistics> result=new ArrayList<>();
+        List<PaymentsStatistics> lst=quotationRepository.findAllQuotationByYear(year);
+        for(int month=1;month<13;month++) {
+            PaymentsStatistics item= findPettyCashByMonth(month,lst);
+            result.add(item);
+        }
+        return result;//checkMastRepository.findAllPettyCashByYear(year);
     }
 
 //    public int savePettyCash(CheckModel item)

@@ -46,8 +46,8 @@ public class JwtAuthenticationController {
     @Autowired
     private JwtUserDetailsServiceImpl userDetailsService;
 
-    //http://localhost:8091/authenticate
-   // {"username":"javainuse","password":"password"}
+    //http://localhost:8091/api/authenticate
+   // {"email":"shadi@hinawi.ae","password":"password"}
 
     @RequestMapping(value = "/authenticate1", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {

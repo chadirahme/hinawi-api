@@ -80,6 +80,8 @@ public class UserServiceimpl implements UserService {
 
     @Override
     public List<Customers> getCustomersBalance() {
+        customersRepository.findBalance().stream().map(Customers::getName)
+                .collect(Collectors.toList());
         return customersRepository.findBalance();
     }
 

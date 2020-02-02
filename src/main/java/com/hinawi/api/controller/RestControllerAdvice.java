@@ -46,9 +46,9 @@ public class RestControllerAdvice {
     @ResponseBody
     public ErrorInfo generalRuntimeExcption(HttpServletRequest req, Exception ex) {
         Locale locale = LocaleContextHolder.getLocale();
-        String errorMessage = "Excption control advice at "  + this.timestamp;//messageSource.getMessage("error.no.smartphone.id", null, locale);
+        String errorMessage = "Exception control advice at "  + this.timestamp;//messageSource.getMessage("error.no.smartphone.id", null, locale);
 
-        errorMessage += ex.getMessage();
+        errorMessage += " >>> " +ex.getMessage();
         String errorURL = req.getRequestURL().toString();
 
         return new ErrorInfo(errorURL, errorMessage);

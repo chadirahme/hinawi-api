@@ -105,6 +105,16 @@ public class AccountingController {
 
     }
 
+    @RequestMapping(value = "/quotationChartByYear", method = RequestMethod.GET)
+    public ResponseEntity<HashMap<Integer,List<PaymentsStatistics>>> quotationChartByYear()
+    {
+        //List<PaymentsStatistics> list=paymnetRepository.findAllPaymentsByYear(2017);
+        HashMap<Integer,List<PaymentsStatistics> > hashMap=new HashMap<>();
+        hashMap.put(2018,accountService.findAllQuotationByYear(2018));
+        hashMap.put(2019,accountService.findAllQuotationByYear(2019));
+        return new ResponseEntity<HashMap<Integer,List<PaymentsStatistics> >>(hashMap, HttpStatus.OK);
+
+    }
 
     //public int approvePurchaseOrder(int recNo)
 

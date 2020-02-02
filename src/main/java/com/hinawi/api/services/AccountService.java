@@ -16,4 +16,6 @@ public interface AccountService {
     List<Checkmast> getPettyCashList();
 
     List<PaymentsStatistics> findAllPettyCashByYear(Integer year);
+
+    List<PaymentsStatistics> findAllQuotationByYear(Integer year);
 }
