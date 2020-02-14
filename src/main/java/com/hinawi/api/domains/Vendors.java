@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "Vendor")
@@ -50,4 +51,7 @@ public class Vendors {
 
     @Column(name="Balance")
     private Double balance;
+
+    @Column(name="TimeCreated")
+    private Date timeCreated;
 }

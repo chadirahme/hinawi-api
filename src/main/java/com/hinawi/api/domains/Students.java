@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "tbm_Registration")
@@ -47,5 +48,8 @@ public class Students {
     private String enMiddleName;
     @Column(name="EnLastName")
     private String enLastName;
+
+    @Column(name="CreationDate")
+    private Date timeCreated;
 
 }

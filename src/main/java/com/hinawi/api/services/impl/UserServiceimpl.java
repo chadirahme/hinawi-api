@@ -5,6 +5,7 @@ import com.hinawi.api.domains.*;
 import com.hinawi.api.dto.UserDto;
 import com.hinawi.api.repository.*;
 import com.hinawi.api.services.UserService;
+import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.sql.Timestamp;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -38,6 +41,8 @@ public class UserServiceimpl implements UserService {
     MobileAttendanceRepository mobileAttendanceRepository;
     @Autowired
     ProspectiveContactRepository prospectiveContactRepository;
+    @Autowired
+    QuotationRepository quotationRepository;
 
 //    @PersistenceContext
 //    private EntityManager _entityManager;
@@ -55,17 +60,47 @@ public class UserServiceimpl implements UserService {
 
     @Override
     public List<Customers> getCustomers() {
-        return customersRepository.findAll();
+        return customersRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
     @Override
     public List<Prospective> getProspectives() {
+        List<Prospective> lstPro =  prospectiveRepository.findAll(new Sort(Sort.Direction.DESC, "TimeCreated"));
+
+        //return prospectiveRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        //check HAS QUOTATION
+        List<Quotation> lstQuotation =  quotationRepository.findAllHasQuotation();
+        if(lstQuotation.size()>0){
+            List<Long> ids = lstQuotation.stream()
+                    .map(Quotation::getCustomerRefKey).distinct()
+                    .map(Long::valueOf)
+                    .collect(Collectors.toList());
+
+            List<Prospective> lstUpdatedPro=  lstPro.stream().map((v) -> {
+                if (ids.contains(v.getRecNo())) v.setHasQuotation("Yes") ; return v;
+            }).collect(Collectors.toList());
+
+            return lstUpdatedPro;
+           //lstPro= lstPro.stream().map(p->p.setHasQuotation(ids.contains(p.getRecNo())?"Yes":"No")).collect(Collectors.toList());
+
+            //lstPro.forEach(f -> f.setHasQuotation( ids.contains(f.getRecNo())?"Yes" :"No"));
+        }
+        return lstPro;
+    }
+
+    @Override
+    public List<Prospective> getSortedProspectives() {
         return prospectiveRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
     @Override
     public List<Vendors> getVendors() {
         return vendorsRepository.findAll();
+    }
+
+    @Override
+    public List<Vendors> getSortedVendors() {
+        return vendorsRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
     @Override
@@ -144,17 +179,20 @@ public class UserServiceimpl implements UserService {
     @Override
     public MobileAttendance addMobileAttendance(MobileAttendance mobileAttendance){
         // java.util.Date
-        java.util.Date currentDate = Calendar.getInstance().getTime();
+        //java.util.Date currentDate = Calendar.getInstance().getTime();
 
         List<MobileAttendance>  lst= mobileAttendanceRepository.findLastVisit(mobileAttendance.getUserId());
         if(lst!=null && lst.size()>0){
             MobileAttendance mobileAttendance1=lst.get(0);
-            mobileAttendance1.setCheckoutTime(currentDate);
+           // mobileAttendance1.setCheckoutTime(mobileAttendance.getCheckoutTime());// as I am passing only checkinTime from front-end
+            mobileAttendance1.setCheckoutTime(mobileAttendance.getLocalCheckinTime().toInstant()
+                    .atZone(ZoneId.systemDefault()).toLocalDateTime());
             mobileAttendance1.setCheckoutNote(mobileAttendance.getCheckinNote());
             mobileAttendanceRepository.save(mobileAttendance1);
         }
        else {
-            mobileAttendance.setCheckinTime(currentDate);
+            mobileAttendance.setCheckinTime(mobileAttendance.getLocalCheckinTime().toInstant()
+                    .atZone(ZoneId.systemDefault()).toLocalDateTime());  //mobileAttendance.getCheckinTime());
             mobileAttendanceRepository.save(mobileAttendance);
         }
 
@@ -165,6 +203,14 @@ public class UserServiceimpl implements UserService {
     public Prospective saveProspectives(Prospective prospective){
         if(prospective.getRecNo()==0){
             prospective.setRecNo(prospectiveRepository.getMaxId()+1);
+            prospective.setTimeCreated(new Date());
+            prospective.setFullName(prospective.getName());
+            if(StringUtils.isEmpty(prospective.getActive()))
+            prospective.setActive("N");
+            if(prospective.getPriorityID()==null)
+            {
+                prospective.setPriorityID(0);
+            }
         }
         prospectiveRepository.save(prospective);
         if(prospective.getLstProspectiveCotact()!=null) {

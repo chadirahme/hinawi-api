@@ -1,11 +1,13 @@
 package com.hinawi.api.domains;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hinawi.api.converter.LocalDateTimeAttributeConverter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -44,13 +46,20 @@ public class MobileAttendance {
     @Column(name="CheckoutNote")
     private String checkoutNote;
 
+    //@Temporal(TemporalType.DATE)
+    //@Convert(converter = LocalDateTimeAttributeConverter.class)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="CheckinTime")
-    private Date checkinTime;
+    private LocalDateTime checkinTime;
+
+    //@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    //@Column(name="CheckinTime")
+    @Transient
+    private Date localCheckinTime;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="CheckoutTime")
-    private Date checkoutTime;
+    private LocalDateTime checkoutTime;
 
     @Column(name="CheckinLatitude")
     private Float checkinLatitude;

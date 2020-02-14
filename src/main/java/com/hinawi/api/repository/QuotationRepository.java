@@ -17,4 +17,16 @@ public interface QuotationRepository extends JpaRepository<Quotation,Long> {
                     " order by month(TxnDate)",
             nativeQuery = true)
     List<PaymentsStatistics> findAllQuotationByYear(Integer year);
+
+
+    @Query(
+            value = "SELECT *" +
+                    " FROM Quotation p " +
+                    " where ClientType='P' AND Status in ('C' , 'H' , 'O')" ,
+            nativeQuery = true)
+    List<Quotation> findAllHasQuotation();
+
+    //HAS QUOTATION
+    //Select Distinct CustomerRefKey As QUOTPROSKE
+    //From Quotation Where ClientType='P' AND Status in ('C' , 'H' , 'O')
 }

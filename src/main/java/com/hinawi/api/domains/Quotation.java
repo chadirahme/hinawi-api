@@ -23,4 +23,14 @@ public class Quotation {
     @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name="TxnDate")
     private Date txnDate;
+
+    @Column(name="ClientType")
+    private String clientType;
+
+    @Column(name="CustomerRefKey")
+    private int customerRefKey;
+
+    @Column(name="Status")
+    private String status;
+
 }

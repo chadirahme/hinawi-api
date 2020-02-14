@@ -153,4 +153,12 @@ public class Prospective {
 //    @Column(name="altcontact")
 //    private String altcontact;
 
+    @Transient
+    private String hasQuotation;
+    public String getHasQuotation(){
+        if(hasQuotation==null)
+            hasQuotation= "No";
+
+        return hasQuotation;
+    }
 }

@@ -70,6 +70,21 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value= Constants.PROSPECTIVE_SORTED_LIST, method= RequestMethod.GET)
+    public ApiResponse<List<Prospective>> getProspectivesSortedList() {
+        try {
+
+            return new ApiResponse<>(HttpStatus.OK.value(), "Prospective list fetched successfully.", userService.getSortedProspectives());
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+        }
+    }
+
+
+
     @RequestMapping(value= Constants.PROSPECTIVE_CONTACTS_LIST, method= RequestMethod.GET)
     public ApiResponse<List<ProspectiveCotact>> getProspectiveContacts(@RequestParam("recNo") long recNo) {
         try {
@@ -85,15 +100,15 @@ public class UserController {
 
     @RequestMapping(value= "/saveProspectives", method= RequestMethod.POST)
     public ApiResponse<Prospective> saveProspectives(@RequestBody Prospective prospective) {
-        try {
+        //try {
             userService.saveProspectives(prospective);
             return new ApiResponse<>(HttpStatus.OK.value(), "Prospective saved successfully.", prospective);
-        }
-        catch (Exception ex)
-        {
-            logger.error(ex.getMessage());
-            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
-        }
+        //}
+//        catch (Exception ex)
+//        {
+//            logger.error(ex.getMessage());
+//            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+//        }
     }
 
     @RequestMapping(value= "/saveProspectiveContact", method= RequestMethod.POST)
@@ -114,7 +129,8 @@ public class UserController {
     public ApiResponse<List<Vendors>> getVendors() {
         try {
 
-            return new ApiResponse<>(HttpStatus.OK.value(), "Vendors list fetched successfully.", userService.getVendors());
+            //return new ApiResponse<>(HttpStatus.OK.value(), "Vendors list fetched successfully.", userService.getVendors());
+            return new ApiResponse<>(HttpStatus.OK.value(), "Vendors list fetched successfully.", userService.getSortedVendors());
         }
         catch (Exception ex)
         {
@@ -292,7 +308,7 @@ public class UserController {
     public ApiResponse<WebDashboard> addMobileAttendance(@RequestBody MobileAttendance mobileAttendance) {
         try {
             userService.addMobileAttendance(mobileAttendance);
-            return new ApiResponse<>(HttpStatus.OK.value(), "WebDashboard added successfully.", mobileAttendance);
+            return new ApiResponse<>(HttpStatus.OK.value(), "Attendance added successfully.", mobileAttendance);
         }
         catch (Exception ex)
         {

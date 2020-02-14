@@ -97,6 +97,10 @@ public class AccountingController {
     @RequestMapping(value = "/pettycashchart", method = RequestMethod.GET)
     public ResponseEntity<HashMap<Integer,List<PaymentsStatistics>>> pettyCashChartByYear()
     {
+//        logger.debug("This is a debug message");
+//        logger.info("This is an info message");
+//        logger.warn("This is a warn message");
+//        logger.error("This is an error message");
         //List<PaymentsStatistics> list=paymnetRepository.findAllPaymentsByYear(2017);
         HashMap<Integer,List<PaymentsStatistics> > hashMap=new HashMap<>();
         hashMap.put(2018,accountService.findAllPettyCashByYear(2018));

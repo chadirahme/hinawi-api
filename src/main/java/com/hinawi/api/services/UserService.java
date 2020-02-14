@@ -11,7 +11,9 @@ public interface UserService {
     Users loginUsers(Users users);
     List<Customers> getCustomers();
     List<Prospective> getProspectives();
+    List<Prospective> getSortedProspectives();
     List<Vendors> getVendors();
+    List<Vendors> getSortedVendors();
     List<MobileAttendance> getMobileAttendance();
 
     List<Vendors> getVendorsBalance();
