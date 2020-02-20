@@ -61,4 +61,6 @@ public class Checkmast {
     @Column(name="Cheque")
     private String Cheque;
 
+    @Column(name="STATUS")
+    private String status;
 }

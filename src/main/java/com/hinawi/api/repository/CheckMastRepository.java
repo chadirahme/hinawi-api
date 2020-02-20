@@ -13,6 +13,7 @@ public interface CheckMastRepository extends JpaRepository<Checkmast,Long> {
     @Query(
             value = "SELECT round(sum(amount),2) as total,month(pvDate) as paymonth" +
                     " FROM Checkmast p WHERE year(pvDate) = ?" +
+                    " AND STATUS NOT IN ('V')"+
                     " group by year(pvDate),month(pvDate)" +
                     " order by month(pvDate)",
             nativeQuery = true)

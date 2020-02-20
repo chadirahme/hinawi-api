@@ -37,9 +37,18 @@ public class Customers {
     @Column(name="email")
     private String email;
 
-    @Column(name="totalBalance")
+    @Column(name="localbalance")
     private Double balance;
 
     @Column(name="TimeCreated")
     private Date timeCreated;
+
+    @Column(name="contact")
+    private String contact;
+
+    @Column(name="phone")
+    private String phone;
+
+    @Column(name="altphone")
+    private String altPhone;
 }

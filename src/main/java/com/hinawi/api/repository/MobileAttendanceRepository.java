@@ -13,4 +13,7 @@ public interface MobileAttendanceRepository extends JpaRepository<MobileAttendan
 
     @Query("SELECT p FROM MobileAttendance p WHERE userId =?1 and checkoutTime is null order by attendId desc")
     public List<MobileAttendance> findLastVisit(int userId);
+
+    @Query("SELECT p FROM MobileAttendance p WHERE userId =?1 order by attendId desc")
+    List<MobileAttendance> findLastUserVisit(int userId);
 }

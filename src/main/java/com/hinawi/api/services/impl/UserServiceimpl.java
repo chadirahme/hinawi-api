@@ -181,14 +181,19 @@ public class UserServiceimpl implements UserService {
         // java.util.Date
         //java.util.Date currentDate = Calendar.getInstance().getTime();
 
-        List<MobileAttendance>  lst= mobileAttendanceRepository.findLastVisit(mobileAttendance.getUserId());
-        if(lst!=null && lst.size()>0){
-            MobileAttendance mobileAttendance1=lst.get(0);
-           // mobileAttendance1.setCheckoutTime(mobileAttendance.getCheckoutTime());// as I am passing only checkinTime from front-end
-            mobileAttendance1.setCheckoutTime(mobileAttendance.getLocalCheckinTime().toInstant()
-                    .atZone(ZoneId.systemDefault()).toLocalDateTime());
-            mobileAttendance1.setCheckoutNote(mobileAttendance.getCheckinNote());
-            mobileAttendanceRepository.save(mobileAttendance1);
+        if(mobileAttendance.getCheckoutNote()!=null) {
+            List<MobileAttendance> lst = mobileAttendanceRepository.findLastVisit(mobileAttendance.getUserId());
+            if (lst != null && lst.size() > 0) {
+                MobileAttendance mobileAttendance1 = lst.get(0);
+                // mobileAttendance1.setCheckoutTime(mobileAttendance.getCheckoutTime());// as I am passing only checkinTime from front-end
+                mobileAttendance1.setCheckoutTime(mobileAttendance.getLocalCheckinTime().toInstant()
+                        .atZone(ZoneId.systemDefault()).toLocalDateTime());
+                mobileAttendance1.setCheckoutNote(mobileAttendance.getCheckoutNote());
+                mobileAttendance1.setCheckoutLatitude(mobileAttendance.getCheckoutLatitude());
+                mobileAttendance1.setCheckoutLongitude(mobileAttendance.getCheckoutLongitude());
+                mobileAttendanceRepository.save(mobileAttendance1);
+
+            }
         }
        else {
             mobileAttendance.setCheckinTime(mobileAttendance.getLocalCheckinTime().toInstant()
@@ -197,6 +202,18 @@ public class UserServiceimpl implements UserService {
         }
 
         return mobileAttendance;
+    }
+
+    @Override
+    public List<MobileAttendance> checkIfUserCheckedIn(int userId){
+       return mobileAttendanceRepository.findLastVisit(userId);
+    }
+    @Override
+    public MobileAttendance findLastUserVisit(int userId){
+        List<MobileAttendance>  lst=mobileAttendanceRepository.findLastUserVisit(userId);
+        if(lst!=null && lst.size()>0)
+        return lst.get(0);
+        else return null;
     }
 
     @Override

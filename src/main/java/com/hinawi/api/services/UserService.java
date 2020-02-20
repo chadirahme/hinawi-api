@@ -32,6 +32,9 @@ public interface UserService {
     WebDashboard addWebDashboard(WebDashboard webDashboard);
     WebDashboard deleteWebDashboard(WebDashboard webDashboard);
 
+    List<MobileAttendance> checkIfUserCheckedIn(int userId);
+    MobileAttendance findLastUserVisit(int userId);
+
     MobileAttendance addMobileAttendance(MobileAttendance mobileAttendance);
     Prospective saveProspectives(Prospective prospective);
     List<ProspectiveCotact> getProspectiveContacts(long recNo);

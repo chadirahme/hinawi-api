@@ -61,7 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable()
                 //.cors().and()
                 // dont authenticate this particular request and OPTIONS need for Angular
-                .authorizeRequests().antMatchers("/api/authenticate").
+                .authorizeRequests().antMatchers("/api/authenticate","/home/health").
                  permitAll().antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                  .antMatchers("/ws/**").permitAll().
                 // all other requests need to be authenticated

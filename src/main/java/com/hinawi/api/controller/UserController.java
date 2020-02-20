@@ -139,18 +139,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value= Constants.MOBILE_ATTENDANCE, method= RequestMethod.GET)
-    public ApiResponse<List<MobileAttendance>> getMobileAttendace() {
-        try {
 
-            return new ApiResponse<>(HttpStatus.OK.value(), "Mobile list fetched successfully.", userService.getMobileAttendance());
-        }
-        catch (Exception ex)
-        {
-            logger.error(ex.getMessage());
-            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
-        }
-    }
 
 
     @RequestMapping(value= Constants.VENDORS_BALANCE, method= RequestMethod.GET)
@@ -304,16 +293,5 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value= "/addMobileAttendance", method= RequestMethod.POST)
-    public ApiResponse<WebDashboard> addMobileAttendance(@RequestBody MobileAttendance mobileAttendance) {
-        try {
-            userService.addMobileAttendance(mobileAttendance);
-            return new ApiResponse<>(HttpStatus.OK.value(), "Attendance added successfully.", mobileAttendance);
-        }
-        catch (Exception ex)
-        {
-            logger.error(ex.getMessage());
-            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
-        }
-    }
+
 }

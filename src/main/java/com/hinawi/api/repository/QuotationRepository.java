@@ -12,7 +12,7 @@ public interface QuotationRepository extends JpaRepository<Quotation,Long> {
 
     @Query(
             value = "SELECT count(*) as total, month(TxnDate) as paymonth" +
-                    " FROM Quotation p WHERE year(TxnDate) = ?" +
+                    " FROM Quotation p WHERE Status not in ('V' , 'T') and year(TxnDate) = ?" +
                     " group by year(TxnDate),month(TxnDate)" +
                     " order by month(TxnDate)",
             nativeQuery = true)

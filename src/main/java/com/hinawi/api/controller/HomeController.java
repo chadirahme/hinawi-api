@@ -26,4 +26,13 @@ public class HomeController {
         return "Message sent to the RabbitMQ JavaInUse Successfully";
     }
 
+    @GetMapping(value = "/health")
+    public String health() {
+        logger.debug("This is a debug message");
+        logger.info("This is an info message");
+        logger.warn("This is a warn message");
+        logger.error("This is an error message");
+        return "Testing Health Successfully";
+    }
+
 }
