@@ -14,7 +14,7 @@ public interface UserService {
     List<Prospective> getSortedProspectives();
     List<Vendors> getVendors();
     List<Vendors> getSortedVendors();
-    List<MobileAttendance> getMobileAttendance();
+    List<MobileAttendance> getMobileAttendance(int month);
 
     List<Vendors> getVendorsBalance();
     List<Customers> getCustomersBalance();
@@ -39,4 +39,6 @@ public interface UserService {
     Prospective saveProspectives(Prospective prospective);
     List<ProspectiveCotact> getProspectiveContacts(long recNo);
     ProspectiveCotact saveProspectiveContacts(ProspectiveCotact prospectiveCotact);
+
+    CompanySettings getCompanySettings();
 }

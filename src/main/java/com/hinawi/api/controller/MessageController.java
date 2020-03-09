@@ -1,10 +1,12 @@
 package com.hinawi.api.controller;
 
+import com.hinawi.api.domains.MobileAttendance;
 import com.hinawi.api.domains.Users;
 import com.hinawi.api.domains.WebMessages;
 import com.hinawi.api.dto.ApiResponse;
 import com.hinawi.api.services.UserService;
 import com.hinawi.api.utils.Constants;
+import com.hinawi.api.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +34,9 @@ public class MessageController {
     @MessageMapping("hello")
     @SendTo("/topic/hi")
     public ApiResponse<String> sendTopicMessage(WebMessages webMessages) throws Exception {
+        //stop save message for testing notification
         int count= addWebMessages(webMessages);
-        logger.info("topic>> " + webMessages.getUserName());
+        logger.info("topic/hi>> " + webMessages.getUserName());
         String msg="Hi, " + webMessages.getUserName() + "!";
         return new ApiResponse<>(HttpStatus.OK.value(),
                 "Websocket message send successfully.", count);
@@ -53,6 +56,18 @@ public class MessageController {
             logger.error(ex.getMessage());
             return 0;
         }
+    }
+
+    @MessageMapping("attendanceMessage")
+    @SendTo("/topic/attendanceResult")
+    public ApiResponse<String> addAttendance(MobileAttendance mobileAttendance) throws Exception {
+        logger.info("topic/attendanceMessage>>> " + mobileAttendance.getUserName());
+        String type="Check Out";
+        if(StringUtils.isEmptyString(mobileAttendance.getCheckoutNote()))
+                type="Check IN";
+        String msg= mobileAttendance.getUserName() + " " + type + " for " +mobileAttendance.getReasonDesc() + " "+ mobileAttendance.getCustomerName();
+        return new ApiResponse<>(HttpStatus.OK.value(),
+                "Websocket message send successfully.", msg);
     }
 
 //    @MessageMapping("/hello")

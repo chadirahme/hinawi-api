@@ -13,6 +13,7 @@ public class UserDto {
     String password;
     String token;
     String role;
+    String companyName;
 
     public UserDto(){
 

@@ -3,11 +3,13 @@ package com.hinawi.api.controller;
 import java.util.Objects;
 
 import com.hinawi.api.config.JwtTokenUtil;
+import com.hinawi.api.domains.CompanySettings;
 import com.hinawi.api.domains.Users;
 import com.hinawi.api.dto.ApiResponse;
 import com.hinawi.api.dto.JwtRequest;
 import com.hinawi.api.dto.JwtResponse;
 import com.hinawi.api.dto.UserDto;
+import com.hinawi.api.services.UserService;
 import com.hinawi.api.services.impl.JwtUserDetailsServiceImpl;
 import com.hinawi.api.utils.Constants;
 import org.slf4j.Logger;
@@ -45,6 +47,9 @@ public class JwtAuthenticationController {
 
     @Autowired
     private JwtUserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    UserService userService;
 
     //http://localhost:8091/api/authenticate
    // {"email":"shadi@hinawi.ae","password":"password"}
@@ -101,6 +106,10 @@ public class JwtAuthenticationController {
                 userDto.setRole(simpleGrantedAuthority.getAuthority());
                 else
                     userDto.setRole("");
+
+                CompanySettings companySettings= userService.getCompanySettings();
+                if(companySettings!=null)
+                   userDto.setCompanyName(companySettings.getCompanyName());
 
                 return new ApiResponse<>(HttpStatus.OK.value(), "User list fetched successfully.", userDto, true);
             }

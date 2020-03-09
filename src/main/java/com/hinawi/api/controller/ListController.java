@@ -1,13 +1,11 @@
 package com.hinawi.api.controller;
 
-import com.hinawi.api.domains.CustomerStatusHistory;
-import com.hinawi.api.domains.HRListFields;
-import com.hinawi.api.domains.HRListValues;
-import com.hinawi.api.domains.SalesRep;
+import com.hinawi.api.domains.*;
 import com.hinawi.api.dto.ApiResponse;
 import com.hinawi.api.dto.ChequeModel;
 import com.hinawi.api.dto.HRListFieldsEnum;
 import com.hinawi.api.repository.CustomerStatusHistoryRepository;
+import com.hinawi.api.repository.EmployeesRepository;
 import com.hinawi.api.repository.HRListValuesRepository;
 import com.hinawi.api.services.ListService;
 import org.slf4j.Logger;
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -34,6 +33,9 @@ public class ListController {
 
     @Autowired
     CustomerStatusHistoryRepository customerStatusHistoryRepository;
+
+    @Autowired
+    EmployeesRepository employeesRepository;
 
     @RequestMapping(path = "/GetCities", produces = "application/json; charset=UTF-8")
    // @ResponseBody
@@ -144,6 +146,21 @@ public class ListController {
     public ApiResponse<List<CustomerStatusHistory>> getHRListValues(@RequestParam("custKey") int custKey) {
         try {
             return new ApiResponse<>(HttpStatus.OK.value(), "list fetched successfully.", customerStatusHistoryRepository.findProspectiveStatusHistory(custKey));
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
+        }
+    }
+
+    @GetMapping(value = "/employeesList")
+    public ApiResponse<List<EmployeeMaster>> getEmployeesList(@RequestParam("active") String active) {
+        try {
+            return new ApiResponse<>(HttpStatus.OK.value(), "EmployeeMaster list fetched successfully.",
+                    employeesRepository.findByActive(active).stream()
+                    .sorted(Comparator.comparing(EmployeeMaster::getEnglishFullName))
+                    .collect(Collectors.toList()));
         }
         catch (Exception ex)
         {

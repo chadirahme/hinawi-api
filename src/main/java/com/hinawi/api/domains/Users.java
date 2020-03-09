@@ -31,6 +31,13 @@ public class Users {
     @Column(name="userPassword")
     private String password;
 
+    @Column(name="STATUS")
+    private Integer status;
+
+    @Column(name="ACTIVATION")
+    private Integer activation;
+
+
     public Users(String userName , String password) {
         this.userName = userName;
         this.password = password;

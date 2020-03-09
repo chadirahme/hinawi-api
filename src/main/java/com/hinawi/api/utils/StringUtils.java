@@ -5,7 +5,7 @@ package com.hinawi.api.utils;
  */
 public class StringUtils {
 
-//   public static boolean isEmptyString(String string) {
-//       return string == null || string.isEmpty();
-//    }
+   public static boolean isEmptyString(String string) {
+       return string == null || string.isEmpty();
+    }
 }

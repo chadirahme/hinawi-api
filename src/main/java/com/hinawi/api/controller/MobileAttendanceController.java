@@ -38,10 +38,10 @@ public class MobileAttendanceController {
     }
 
     @RequestMapping(value= Constants.MOBILE_ATTENDANCE, method= RequestMethod.GET)
-    public ApiResponse<List<MobileAttendance>> getMobileAttendace() {
+    public ApiResponse<List<MobileAttendance>> getDailyMobileAttendace(@RequestParam("month") int month) {
         try {
 
-            return new ApiResponse<>(HttpStatus.OK.value(), "Mobile list fetched successfully.", userService.getMobileAttendance());
+            return new ApiResponse<>(HttpStatus.OK.value(), "Mobile list fetched successfully.", userService.getMobileAttendance(month));
         }
         catch (Exception ex)
         {

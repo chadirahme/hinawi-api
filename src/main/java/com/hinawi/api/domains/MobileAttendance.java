@@ -2,6 +2,7 @@ package com.hinawi.api.domains;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hinawi.api.converter.LocalDateTimeAttributeConverter;
+import com.hinawi.api.dto.ReportsModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,163 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@SqlResultSetMapping(name = "MobileAttendance.dailyMapping",
+        classes = {
+                @ConstructorResult(
+                        targetClass = ReportsModel.class,
+                        columns = {
+                                @ColumnResult(name = "userId"),
+                                @ColumnResult(name = "userName"),
+                                @ColumnResult(name = "checkinTime"),
+                                @ColumnResult(name = "checkoutTime")
+//                                @ColumnResult(name = "pattern_dispatcher_url", type = String.class),
+//                                @ColumnResult(name = "parent_id", type = Long.class),
+//                                @ColumnResult(name = "con", type = Integer.class)
+
+                        })
+        })
+@SqlResultSetMapping(name = "MobileAttendance.monthlyMapping",
+        classes = {
+                @ConstructorResult(
+                        targetClass = ReportsModel.class,
+                        columns = {
+                                @ColumnResult(name = "userId"),
+                                @ColumnResult(name = "userName"),
+                                @ColumnResult(name = "monthName"),
+                                @ColumnResult(name = "totalHours"),
+                                @ColumnResult(name = "totalMinutes"),
+                                @ColumnResult(name = "ratePerHour")
+
+                        })
+        })
+
+@SqlResultSetMapping(name = "MobileAttendance.employeeByReasonMapping",
+        classes = {
+                @ConstructorResult(
+                        targetClass = ReportsModel.class,
+                        columns = {
+                                @ColumnResult(name = "monthName"),
+                                @ColumnResult(name = "ReasonDesc"),
+                                @ColumnResult(name = "totalHours"),
+                                @ColumnResult(name = "totalMinutes")
+
+                        })
+        })
+
+@SqlResultSetMapping(name = "MobileAttendance.absenceReportMapping",
+        classes = {
+                @ConstructorResult(
+                        targetClass = ReportsModel.class,
+                        columns = {
+                                @ColumnResult(name = "UserId"),
+                                @ColumnResult(name = "Username"),
+                                @ColumnResult(name = "checkDate")
+                        })
+        })
+
+@SqlResultSetMapping(name = "MobileAttendance.dailyByMovementMapping",
+        classes = {
+                @ConstructorResult(
+                        targetClass = ReportsModel.class,
+                        columns = {
+                                @ColumnResult(name = "UserName"),
+                                @ColumnResult(name = "CheckinTime"),
+                                @ColumnResult(name = "CheckoutTime"),
+                                @ColumnResult(name = "CheckinLatitude"),
+                                @ColumnResult(name = "CheckinLongitude"),
+                                @ColumnResult(name = "CheckoutLatitude"),
+                                @ColumnResult(name = "CheckoutLongitude"),
+                                @ColumnResult(name = "CheckinNote"),
+                                @ColumnResult(name = "CheckoutNote"),
+                                @ColumnResult(name = "CustomerType"),
+                                @ColumnResult(name = "CustomerName"),
+                                @ColumnResult(name = "ReasonDesc"),
+                                @ColumnResult(name = "CheckoutReasonDesc"),
+                        })
+        })
+
+//@SqlResultSetMapping(name="MobileAttendance.carkey",
+//        entities=@EntityResult(entityClass=MobileAttendance.class,
+//                fields = {
+//                        @FieldResult(name="userId", column = "userId"),
+//                        @FieldResult(name="userName", column = "userName")
+////                        @FieldResult(name="dimension.length", column = "length"),
+////                        @FieldResult(name="dimension.width", column = "width")
+//                })
+        //columns = { @ColumnResult(name = "area")}
+ //       )
+@NamedNativeQuery(name="MobileAttendance.getAttendanceReport",
+        query="select userId,userName,CONVERT(nvarchar,Min(checkinTime), 120) as checkinTime,"+
+        " CONVERT(nvarchar,Max(checkoutTime), 120) as checkoutTime" +
+                " FROM MobileAttendance p WHERE year(checkintime)=2020 and month(checkintime) = :month and month(checkouttime)= :month " +
+                " and DATEADD(dd, DATEDIFF(dd, 0, checkinTime), 0)=DATEADD(dd, DATEDIFF(dd, 0, checkoutTime), 0)" +
+                " group by userid,username,DATEADD(dd, DATEDIFF(dd, 0, checkinTime), 0)" +
+                " ",
+        resultSetMapping="MobileAttendance.dailyMapping")
+
+@NamedNativeQuery(name="MobileAttendance.getMonthlyAttendanceReport",
+        query= " select t.userid, t.username, t.monthName, SUM(t.hours) as 'totalHours', sum(t.minutes) as 'totalMinutes',min(RatePerHour) as 'ratePerHour' " +
+                " from(" +
+                " select m.userid,m.username, datename(M,checkoutTime) as 'monthName'," +
+                "         DATEPART(Hour, checkoutTime - checkinTime) as 'hours', " +
+                "         DATEPART(Minute, checkoutTime - checkinTime) as 'minutes', e.RatePerHour " +
+                " from MobileAttendance m " +
+                "                 left join Users u on m.UserId=u.Userid " +
+                "                 left join EmpMast e on e.Emp_key=u.Emp_key " +
+                " where year(checkintime)=2020 and month(checkintime)= :month and month(checkouttime)= :month" +
+                " and DATEADD(dd, DATEDIFF(dd, 0, checkinTime), 0)=DATEADD(dd, DATEDIFF(dd, 0, checkoutTime), 0)" +
+                " )t" +
+                " group by userid,username,monthName" +
+                " ",
+        resultSetMapping="MobileAttendance.monthlyMapping")
+
+@NamedNativeQuery(name="MobileAttendance.getAttendanceReportByReason",
+        query= " select Min(datename(M,checkoutTime)) as 'monthName', ReasonDesc, " +
+                " Sum(DATEPART(Hour, checkoutTime - checkinTime)) as 'totalHours',"+
+                " sum(DATEPART(Minute, checkoutTime - checkinTime)) as 'totalMinutes'"+
+                " from mobileattendance"+
+                " where year(checkintime)=2020 and userid= :userId"+
+                " and  month(checkintime)= :month and month(checkouttime)= :month"+
+                " and ReasonDesc is not null"+
+                " group by ReasonDesc",
+        resultSetMapping="MobileAttendance.employeeByReasonMapping")
+
+//select UserId,Username,DATEADD(dd, 0, DATEDIFF(dd, 0,checkintime))
+//        from MobileAttendance
+//        group by userid,username,DATEADD(dd, 0, DATEDIFF(dd, 0,checkintime))
+//        order by 3
+
+@NamedNativeQuery(name="MobileAttendance.getAbsenceReport",
+        query= " select UserId,Username,CONVERT(varchar, DATEADD(dd, 0, DATEDIFF(dd, 0,checkintime)), 23) as 'checkDate' " +
+                " from mobileattendance"+
+                " where checkintime between :start and :end"+
+                " group by userid,username,DATEADD(dd, 0, DATEDIFF(dd, 0,checkintime))"+
+                " order by 3",
+        resultSetMapping="MobileAttendance.absenceReportMapping")
+
+
+@NamedNativeQuery(name="MobileAttendance.getAttendanceReportByMovement",
+        query= " select UserName,CONVERT(nvarchar,(checkinTime), 120) as 'CheckinTime',CONVERT(nvarchar,(CheckoutTime), 120) as 'CheckoutTime',CheckinLatitude,CheckinLongitude, "+
+                " CheckoutLatitude,CheckoutLongitude,CheckinNote,CheckoutNote,CustomerType,CustomerName," +
+                " ReasonDesc,CheckoutReasonDesc " +
+                " from MobileAttendance where userid= :userId and " +
+                " DATEADD(dd, DATEDIFF(dd, 0, checkinTime), 0)= :start"+
+                " order by checkinTime,AttendId"
+        ,
+        resultSetMapping="MobileAttendance.dailyByMovementMapping")
+
+//select Min(month(checkintime)) as 'monthName', ReasonDesc,
+//        Sum(DATEPART(Hour, checkoutTime - checkinTime)) as 'hours',
+//        sum(DATEPART(Minute, checkoutTime - checkinTime)) as 'minutes'
+//
+//        from mobileattendance
+//        where userid='30'
+//        and  month(checkintime)=2 and month(checkouttime)=2
+//        and ReasonDesc is not null
+//        group by ReasonDesc
+
+
+//https://www.concretepage.com/hibernate/native_query_hibernate_annotation
 public class MobileAttendance {
 
 //    select w.AttendId,w.UserId,w.CheckinTime,w.CustomerName,w.CustomerType,
@@ -53,6 +211,12 @@ public class MobileAttendance {
     @Column(name="ReasonId")
     private int reasonId;
 
+    @Column(name="CheckoutReasonDesc")
+    private String checkoutReasonDesc;
+
+    @Column(name="CheckoutReasonId")
+    private int checkoutReasonId;
+
     //@Temporal(TemporalType.DATE)
     //@Convert(converter = LocalDateTimeAttributeConverter.class)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
@@ -62,7 +226,7 @@ public class MobileAttendance {
     //@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     //@Column(name="CheckinTime")
     @Transient
-    private Date localCheckinTime;
+    private String localCheckinTime;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name="CheckoutTime")
@@ -106,6 +270,38 @@ public class MobileAttendance {
 
         return  hours + " hours " +
                 minutes + " minutes " ;
+    }
+
+    //https://www.geeksforgeeks.org/program-distance-two-points-earth/
+    @Transient
+    private String visitDistance;
+    public String getVisitDistance() {
+        if (checkoutLatitude == null || checkoutLongitude==null || checkinLatitude==null || checkinLongitude==null)
+            return "";
+
+        double lon1 = Math.toRadians(checkinLongitude);
+        double lon2 = Math.toRadians(checkoutLongitude);
+        double lat1 = Math.toRadians(checkinLatitude);
+        double lat2 = Math.toRadians(checkoutLatitude);
+
+        // Haversine formula
+        double dlon = lon2 - lon1;
+        double dlat = lat2 - lat1;
+        double a = Math.pow(Math.sin(dlat / 2), 2)
+                + Math.cos(lat1) * Math.cos(lat2)
+                * Math.pow(Math.sin(dlon / 2), 2);
+
+        double c = 2 * Math.asin(Math.sqrt(a));
+
+        // Radius of earth in kilometers. Use 3956
+        // for miles
+        double r = 6371;
+
+        // calculate the result
+        double result = (c * r);
+
+        visitDistance = Math.round(result) + " K.M";
+        return visitDistance;
     }
 
 }

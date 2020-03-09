@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -43,6 +46,8 @@ public class UserServiceimpl implements UserService {
     ProspectiveContactRepository prospectiveContactRepository;
     @Autowired
     QuotationRepository quotationRepository;
+    @Autowired
+    CompanySettingsRepository companySettingsRepository;
 
 //    @PersistenceContext
 //    private EntityManager _entityManager;
@@ -104,8 +109,11 @@ public class UserServiceimpl implements UserService {
     }
 
     @Override
-    public List<MobileAttendance> getMobileAttendance() {
+    public List<MobileAttendance> getMobileAttendance(int month) {
+        if(month==0)
         return mobileAttendanceRepository.findAll(new Sort(Sort.Direction.DESC, "attendId"));
+        else
+        return mobileAttendanceRepository.findDailyVisit(month);
     }
 
     @Override
@@ -180,24 +188,30 @@ public class UserServiceimpl implements UserService {
     public MobileAttendance addMobileAttendance(MobileAttendance mobileAttendance){
         // java.util.Date
         //java.util.Date currentDate = Calendar.getInstance().getTime();
-
+        LocalDateTime dateTime = LocalDateTime.parse(mobileAttendance.getLocalCheckinTime());
         if(mobileAttendance.getCheckoutNote()!=null) {
             List<MobileAttendance> lst = mobileAttendanceRepository.findLastVisit(mobileAttendance.getUserId());
             if (lst != null && lst.size() > 0) {
                 MobileAttendance mobileAttendance1 = lst.get(0);
                 // mobileAttendance1.setCheckoutTime(mobileAttendance.getCheckoutTime());// as I am passing only checkinTime from front-end
-                mobileAttendance1.setCheckoutTime(mobileAttendance.getLocalCheckinTime().toInstant()
-                        .atZone(ZoneId.systemDefault()).toLocalDateTime());
+//                mobileAttendance1.setCheckoutTime(mobileAttendance.getLocalCheckinTime().toInstant()
+//                        .atZone(ZoneId.systemDefault()).toLocalDateTime());
+                mobileAttendance1.setCheckoutTime(dateTime);
                 mobileAttendance1.setCheckoutNote(mobileAttendance.getCheckoutNote());
                 mobileAttendance1.setCheckoutLatitude(mobileAttendance.getCheckoutLatitude());
                 mobileAttendance1.setCheckoutLongitude(mobileAttendance.getCheckoutLongitude());
+                mobileAttendance1.setCheckoutReasonId(mobileAttendance.getReasonId());
+                mobileAttendance1.setCheckoutReasonDesc(mobileAttendance.getReasonDesc());
                 mobileAttendanceRepository.save(mobileAttendance1);
 
             }
         }
        else {
-            mobileAttendance.setCheckinTime(mobileAttendance.getLocalCheckinTime().toInstant()
-                    .atZone(ZoneId.systemDefault()).toLocalDateTime());  //mobileAttendance.getCheckinTime());
+//            mobileAttendance.setCheckinTime(mobileAttendance.getLocalCheckinTime().toInstant()
+//                    .atZone(ZoneId.systemDefault()).toLocalDateTime());  //mobileAttendance.getCheckinTime());
+            //LocalDateTime.parse( new SimpleDateFormat("yyyy-MM-dd").format(mobileAttendance.getLocalCheckinTime()));
+            //.replace("T", "T").substring(0,19), formatter);
+            mobileAttendance.setCheckinTime(dateTime);
             mobileAttendanceRepository.save(mobileAttendance);
         }
 
@@ -279,5 +293,14 @@ public class UserServiceimpl implements UserService {
 
         }
         return prospectiveCotact;
+    }
+
+    @Override
+    public CompanySettings getCompanySettings(){
+        List<CompanySettings> lst= companySettingsRepository.findAll();
+        if(lst!=null && lst.size()>0)
+            return lst.get(0);
+        else
+            return null;
     }
 }

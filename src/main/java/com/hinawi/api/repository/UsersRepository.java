@@ -10,6 +10,8 @@ import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import java.util.List;
+
 //http://localhost:8091/rest/users?userName=chadi
 @RepositoryRestResource(collectionResourceRel = "users", path = "users")
 public interface UsersRepository extends JpaRepository<Users,Long>,
@@ -18,6 +20,10 @@ public interface UsersRepository extends JpaRepository<Users,Long>,
     Users findByEmail(String email);
    // Users findByUserNameAndPassword(String userName , String password);
     Users findByEmailAndPassword(String email , String password);
+
+    //select * from users where status=1 and activation=1
+    List<Users> findByStatusAndActivation(Integer status, Integer activation);
+    List<Users> findByActivation(Integer activation);
 
     @Override
     default public void customize(QuerydslBindings bindings, QUsers user) {
