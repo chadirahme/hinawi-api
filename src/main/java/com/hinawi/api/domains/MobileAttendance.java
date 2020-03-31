@@ -128,12 +128,13 @@ import java.util.Date;
         resultSetMapping="MobileAttendance.monthlyMapping")
 
 @NamedNativeQuery(name="MobileAttendance.getAttendanceReportByReason",
-        query= " select Min(datename(M,checkoutTime)) as 'monthName', ReasonDesc, " +
+        query= " select Min(datename(M,checkintime)) as 'monthName', ReasonDesc, " +
                 " Sum(DATEPART(Hour, checkoutTime - checkinTime)) as 'totalHours',"+
                 " sum(DATEPART(Minute, checkoutTime - checkinTime)) as 'totalMinutes'"+
                 " from mobileattendance"+
                 " where year(checkintime)=2020 and userid= :userId"+
-                " and  month(checkintime)= :month and month(checkouttime)= :month"+
+                " and DATEADD(dd, DATEDIFF(dd, 0, checkinTime), 0)= :start"+
+                //" and  month(checkintime)= :month and month(checkouttime)= :month"+
                 " and ReasonDesc is not null"+
                 " group by ReasonDesc",
         resultSetMapping="MobileAttendance.employeeByReasonMapping")
@@ -156,7 +157,7 @@ import java.util.Date;
         query= " select UserName,CONVERT(nvarchar,(checkinTime), 120) as 'CheckinTime',CONVERT(nvarchar,(CheckoutTime), 120) as 'CheckoutTime',CheckinLatitude,CheckinLongitude, "+
                 " CheckoutLatitude,CheckoutLongitude,CheckinNote,CheckoutNote,CustomerType,CustomerName," +
                 " ReasonDesc,CheckoutReasonDesc " +
-                " from MobileAttendance where userid= :userId and " +
+                " from MobileAttendance where  userid= :userId and " + //CheckoutTime is not NULL and
                 " DATEADD(dd, DATEDIFF(dd, 0, checkinTime), 0)= :start"+
                 " order by checkinTime,AttendId"
         ,
@@ -192,6 +193,9 @@ public class MobileAttendance {
 
     @Column(name="UserName")
     private String userName;
+
+    @Transient
+    private Long recNo;
 
     @Column(name="CustomerName")
     private String customerName;

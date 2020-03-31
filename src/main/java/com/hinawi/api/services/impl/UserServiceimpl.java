@@ -2,8 +2,10 @@ package com.hinawi.api.services.impl;
 
 import com.hinawi.api.converter.UserConverter;
 import com.hinawi.api.domains.*;
+import com.hinawi.api.dto.MailModel;
 import com.hinawi.api.dto.UserDto;
 import com.hinawi.api.repository.*;
+import com.hinawi.api.services.MailService;
 import com.hinawi.api.services.UserService;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.Timestamp;
@@ -22,6 +25,8 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,6 +53,9 @@ public class UserServiceimpl implements UserService {
     QuotationRepository quotationRepository;
     @Autowired
     CompanySettingsRepository companySettingsRepository;
+
+    @Autowired
+    MailService mailService;
 
 //    @PersistenceContext
 //    private EntityManager _entityManager;
@@ -214,8 +222,58 @@ public class UserServiceimpl implements UserService {
             mobileAttendance.setCheckinTime(dateTime);
             mobileAttendanceRepository.save(mobileAttendance);
         }
-
+        addAttendanceMemo(mobileAttendance);
         return mobileAttendance;
+    }
+
+    private void addAttendanceMemo(MobileAttendance mobileAttendance){
+        String type="Check In";
+        if (mobileAttendance.getCheckoutNote() != null) {
+            type="Check Out";
+        }
+
+        String note = "Date & Time: " + mobileAttendance.getLocalCheckinTime().replace("T"," @ ");
+        note +="\n" + type + " by: " + mobileAttendance.getUserName();
+        note +="\n" + " Reason: " + mobileAttendance.getReasonDesc();
+        if (mobileAttendance.getCheckoutNote() != null) {
+            note += "\n" + mobileAttendance.getCheckoutNote();
+        } else {
+            note += "\n" + mobileAttendance.getCheckinNote();
+        }
+
+        if(mobileAttendance.getCustomerType().equals("Prospective")) {
+            List<Prospective> lst = prospectiveRepository.findByName(mobileAttendance.getCustomerName());
+            if (lst != null && lst.size() > 0) {
+                Prospective prospective = lst.get(0);
+                //Prospective prospective=  prospectiveRepository.findById(mobileAttendance.getRecNo()).orElse(null);
+                if (prospective != null) {
+                    prospective.setNote(prospective.getNote()==null?"":prospective.getNote() + "\n"  + note);
+                    prospectiveRepository.save(prospective);
+                }
+            }
+        }
+
+        else if(mobileAttendance.getCustomerType().equals("Customer")) {
+            List<Customers> lst = customersRepository.findByName(mobileAttendance.getCustomerName());
+            if (lst != null && lst.size() > 0) {
+                Customers customer = lst.get(0);
+                if (customer != null) {
+                    customer.setNote(customer.getNote()==null?"":customer.getNote() + "\n"  + note);
+                    customersRepository.save(customer);
+                }
+            }
+        }
+
+        else if(mobileAttendance.getCustomerType().equals("Vendor")) {
+            List<Vendors> lst = vendorsRepository.findByName(mobileAttendance.getCustomerName());
+            if (lst != null && lst.size() > 0) {
+                Vendors vendor = lst.get(0);
+                if (vendor != null) {
+                    vendor.setNote(vendor.getNote()==null?"":vendor.getNote() + "\n"  + note);
+                    vendorsRepository.save(vendor);
+                }
+            }
+        }
     }
 
     @Override
@@ -232,7 +290,38 @@ public class UserServiceimpl implements UserService {
 
     @Override
     public Prospective saveProspectives(Prospective prospective){
+        String content="",subject="",note="";
+        Pattern CRLF = Pattern.compile("(\r\n|\r|\n|\n\r)");
+
+        content="<h1>" +prospective.getName()+"</h1>";
+        content+= "<br/><h3>" + "CompanyName: " + prospective.getCompanyName()+"</h3>";
+        content+= "<br/><h3>" + "Contact: " + prospective.getContact()+"</h3>";
+        //<a href="https://web.whatsapp.com/send?phone=${value}&text=Hi, I contacted you Through HinawiOnline."
+//        data-text="Take a look at this awesome website:" class="wa_btn wa_btn_s"
+//        target="_blank"
+//                >${value}</a>
+
+        content+= "<br/><h3>" + "Telephone: " +"<a href='https://web.whatsapp.com/send?phone="+
+                prospective.getTelephone1()+"&text=Hi, I contacted you regarding Hinawi Online.' >"+prospective.getTelephone1() +"</a></h3>";
+
+        content+= "<br/><h3>" + "Alt Telephone: " +"<a href='https://web.whatsapp.com/send?phone="+
+                prospective.getTelephone2()+"&text=Hi, I contacted you regarding Hinawi Online.' >"+prospective.getTelephone2() +"</a></h3>";
+
+        content+= "<br/><h3>" + "Email: " + prospective.getEmail()+"</h3>";
+        content+= "<br/><h3>" + "Active: " + prospective.getActive()+"</h3>";
+        content+= "<br/><h3>" + "Priority: " + prospective.getPriorityID()+"</h3>";
+        note=prospective.getNote()==null?"":prospective.getNote()+"</h2>";
+        Matcher m = CRLF.matcher(note);
+        if (m.find()) {
+            note = m.replaceAll("<br>");
+        }
+        content+= "<br/><h3>" + "Notes: " + note+"</h3>";
+
+        if(prospective.getActive()==null)
+            prospective.setActive("Y");
+
         if(prospective.getRecNo()==0){
+            subject=prospective.getWebUserName() + " from " + prospective.getWebCompanyName() + " Added New Prospective " ;
             prospective.setRecNo(prospectiveRepository.getMaxId()+1);
             prospective.setTimeCreated(new Date());
             prospective.setFullName(prospective.getName());
@@ -242,6 +331,8 @@ public class UserServiceimpl implements UserService {
             {
                 prospective.setPriorityID(0);
             }
+        }else {
+            subject=prospective.getWebUserName() + " from " + prospective.getWebCompanyName() + " Modified Existing Prospective ";
         }
         prospectiveRepository.save(prospective);
         if(prospective.getLstProspectiveCotact()!=null) {
@@ -250,6 +341,23 @@ public class UserServiceimpl implements UserService {
                 saveProspectiveContacts(contact);
             }
         }
+
+
+        try {
+            //send email
+            MailModel mailModel=new MailModel();
+            mailModel.setMailSubject(subject);
+            //mailModel.setMailTo("info@hinawi.ae");
+            mailModel.setMailTo("eng.chadi@gmail.com");
+            mailModel.setMailCc("chadi@hinawi.ae");
+
+            mailModel.setMailContent(content);
+
+            mailService.sendEmail(mailModel);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
         return prospective;
     }
 

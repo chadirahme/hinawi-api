@@ -5,6 +5,8 @@ import com.hinawi.api.dto.ReportsModel;
 import com.hinawi.api.repository.MobileAttendanceRepository;
 import com.hinawi.api.repository.UsersRepository;
 import com.hinawi.api.services.ReportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ReportsServiceImpl implements ReportsService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ReportsServiceImpl.class);
 
     @Autowired
     MobileAttendanceRepository mobileAttendanceRepository;
@@ -50,9 +54,58 @@ public class ReportsServiceImpl implements ReportsService {
     }
 
     @Override
-    public List<ReportsModel> getAttendaceReportByReason(Integer month,Integer userId){
-        List<ReportsModel> lst= mobileAttendanceRepository.getAttendanceReportByReason(month,userId);
-        return lst;
+    public List<ReportsModel> getAttendaceReportByReason(Integer userId, String start){
+        if(start.equals("0"))
+            return
+                new ArrayList<ReportsModel>();
+
+        try {
+
+            logger.info("userId>>> " + userId);
+            logger.info("start>>> " + start);
+
+            List<ReportsModel> lst = mobileAttendanceRepository.getAttendanceReportByReason(userId, start);
+            logger.info("getAttendanceReportByReason>>> " + lst.size());
+
+            //get the checkout reason to add them to Reason report
+            List<ReportsModel> lstMove = getAttendanceReportByMovement(userId, start);
+            logger.info("getAttendanceReportByMovement>>> " + lstMove.size());
+
+            Map<String, Integer> groupCheckOutReason = lstMove.stream()
+                    .collect(Collectors.groupingBy(ReportsModel::getCheckoutReasonDesc, Collectors.summingInt(ReportsModel::getMoveHours)));
+
+            Map<String, Integer> minutesCheckOutReason = lstMove.stream()
+                    .collect(Collectors.groupingBy(ReportsModel::getCheckoutReasonDesc, Collectors.summingInt(ReportsModel::getMoveMinutes)));
+
+
+            groupCheckOutReason.forEach((key, val) -> //System.out.println("Key : " + k + " Value : " + v));
+            {
+                ReportsModel reportsModel = new ReportsModel();
+                reportsModel.setReasonDesc(key);
+                reportsModel.setTotalHours(val);
+                reportsModel.setTotalMinutes(minutesCheckOutReason.get(key));
+                lst.add(reportsModel);
+            });
+            return lst;
+        }
+        catch (Exception ex)
+        {
+            logger.info(ex.getMessage());
+            return
+                    new ArrayList<ReportsModel>();
+
+        }
+
+//                for(ReportsModel item:lstMove){
+//                    ReportsModel reportsModel=new ReportsModel();
+//                    reportsModel.setReasonDesc(item.getCheckoutReasonDesc());
+//                    reportsModel.setMonthlyDuration(item.getMoveDuration());
+//                    //  reportsModel.getMoveDuration();
+//                    reportsModel.setTotalHours(item.getMoveHours());
+//                    reportsModel.setTotalMinutes(item.getMoveMinutes());
+//                    lst.add(reportsModel);
+//                }
+
     }
 
     @Override
@@ -108,8 +161,9 @@ public class ReportsServiceImpl implements ReportsService {
                 reportsModel.setVisitCheckoutTime(nextItem.getCheckoutTime());
                 reportsModel.setCheckinLatitude(nextItem.getCheckinLatitude());
                 reportsModel.setCheckinLongitude(nextItem.getCheckinLongitude());
+                //call this to save moveHours and moveMinutes
+                reportsModel.getMoveDuration();
                 results.add(reportsModel);
-
                 //add the check in again
                 reportsModel = new ReportsModel();
                 reportsModel.setFromCustomerName(nextItem.getCustomerName());

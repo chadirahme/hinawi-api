@@ -65,7 +65,8 @@ public class MessageController {
         String type="Check Out";
         if(StringUtils.isEmptyString(mobileAttendance.getCheckoutNote()))
                 type="Check IN";
-        String msg= mobileAttendance.getUserName() + " " + type + " for " +mobileAttendance.getReasonDesc() + " "+ mobileAttendance.getCustomerName();
+        String msg= mobileAttendance.getUserName() + "<br/>" + " " + type + " for " +mobileAttendance.getReasonDesc() + "<br/>" +
+                " "+ mobileAttendance.getCustomerName();
         return new ApiResponse<>(HttpStatus.OK.value(),
                 "Websocket message send successfully.", msg);
     }

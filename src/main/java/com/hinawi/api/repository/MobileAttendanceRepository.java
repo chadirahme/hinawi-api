@@ -46,8 +46,11 @@ public interface MobileAttendanceRepository extends JpaRepository<MobileAttendan
     @Query(nativeQuery=true)
     List<ReportsModel> getMonthlyAttendanceReport(@Param("month") Integer month);
 
+    //@Query(nativeQuery=true)
+    //List<ReportsModel> getAttendanceReportByReason1(@Param("month") Integer month , @Param("userId") Integer userId);
+
     @Query(nativeQuery=true)
-    List<ReportsModel> getAttendanceReportByReason(@Param("month") Integer month , @Param("userId") Integer userId);
+    List<ReportsModel> getAttendanceReportByReason(@Param("userId") Integer userId,@Param("start") String start);
 
     @Query(nativeQuery=true)
     List<ReportsModel> getAbsenceReport(@Param("start") String start,@Param("end") String end);

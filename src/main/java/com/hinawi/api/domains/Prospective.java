@@ -150,6 +150,13 @@ public class Prospective {
     @Column(name="Address2")
     private String zipCode;
 
+    @Column(name="WebUserName")
+    private String webUserName;
+
+    //used when send email to know which file we used
+    @Transient
+    private String webCompanyName;
+
 //    @Column(name="altcontact")
 //    private String altcontact;
 

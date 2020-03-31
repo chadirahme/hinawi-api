@@ -51,4 +51,7 @@ public class Customers {
 
     @Column(name="altphone")
     private String altPhone;
+
+    @Column(name="note")
+    private String note;
 }

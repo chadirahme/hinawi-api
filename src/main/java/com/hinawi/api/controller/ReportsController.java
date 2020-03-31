@@ -66,14 +66,16 @@ public class ReportsController {
     }
 
     @GetMapping(value = "/attendanceByReason")
-    public ApiResponse<List<ReportsModel>> getAttendaceReportByReason(@RequestParam("month") Integer month, @RequestParam("userId") Integer userId) {
+    public ApiResponse<List<ReportsModel>> getAttendaceReportByReason(@RequestParam("month") Integer month,
+                                                                      @RequestParam("userId") Integer userId,
+                                                                      @RequestParam("start") String start) {
         try {
             return new ApiResponse<>(HttpStatus.OK.value(), "getAttendaceReportByReason list fetched successfully.",
-                    reportsService.getAttendaceReportByReason(month,userId));
+                    reportsService.getAttendaceReportByReason(userId,start));
         }
         catch (Exception ex)
         {
-            logger.error(ex.getMessage());
+            logger.info(ex.getMessage());
             return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
         }
     }
@@ -102,7 +104,7 @@ public class ReportsController {
         }
         catch (Exception ex)
         {
-            logger.error(ex.getMessage());
+            logger.info(ex.getMessage());
             return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), ex.getMessage(), null);
         }
     }

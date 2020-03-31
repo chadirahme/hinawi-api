@@ -14,7 +14,9 @@ import java.util.List;
 public interface VendorsRepository extends JpaRepository<Vendors,Long> {
 
     @Query("SELECT p FROM Vendors p WHERE balance is not null and balance<>0")
-    public List<Vendors> findBalance();
+    List<Vendors> findBalance();
+
+    List<Vendors> findByName(String name);
 }
 
 

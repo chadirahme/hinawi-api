@@ -15,7 +15,8 @@ public interface ReportsService {
 
     List<ReportsModel> getMonthlyAttendaceReport(Integer month);
 
-    List<ReportsModel> getAttendaceReportByReason(Integer month,Integer userId);
+    //List<ReportsModel> getAttendaceReportByReason(Integer month,Integer userId);
+    List<ReportsModel> getAttendaceReportByReason(Integer userId, String start);
 
     List<Users> getUsersByStatusAndActivation(Integer status, Integer activation);
 

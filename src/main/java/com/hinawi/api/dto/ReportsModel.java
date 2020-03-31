@@ -39,6 +39,10 @@ public class ReportsModel {
     private String visitCheckinTime;
     private String visitCheckoutTime;
 
+    //used in Reasons report
+    private int moveHours;
+    private int moveMinutes;
+
     public ReportsModel(){
 
     }
@@ -59,11 +63,12 @@ public class ReportsModel {
         this.ratePerHour=ratePerHour;
     }
 
-    public ReportsModel(String monthName,String reasonDesc, int totalHours,int totalMinutes){
+    //employeeByReasonMapping
+    public ReportsModel(String monthName,String reasonDesc, Integer totalHours,Integer totalMinutes){
         this.monthName=monthName;
         this.reasonDesc=reasonDesc;
-        this.totalHours=totalHours;
-        this.totalMinutes=totalMinutes;
+        this.totalHours=totalHours==null?0:totalHours;
+        this.totalMinutes=totalMinutes==null?0:totalMinutes;
     }
 
 
@@ -133,9 +138,11 @@ public class ReportsModel {
         LocalDateTime tempDateTime = LocalDateTime.from(checkoutDateTime);
 
         long hours = tempDateTime.until( checkinDateTime, ChronoUnit.HOURS );
+        moveHours=(int)hours;
         tempDateTime = tempDateTime.plusHours( hours );
 
         long minutes = tempDateTime.until( checkinDateTime, ChronoUnit.MINUTES );
+        moveMinutes=(int) minutes;
         return  hours + " Hours " +
                 minutes + " Minutes " ;
     }
@@ -186,9 +193,15 @@ public class ReportsModel {
         int hours = totalMinutes / 60; //since both are ints, you get an int
         int minutes = totalMinutes % 60;
 
+
         hours+=totalHours;
-        if(ratePerHour!=null)
-        return ratePerHour*hours;
+        if(ratePerHour!=null) {
+            //cal rate per minutes
+            if(minutes>0){
+                monthlyRate=(minutes*ratePerHour)/60.0;
+            }
+            return monthlyRate + (ratePerHour * hours);
+        }
         else
             return 0;
     }

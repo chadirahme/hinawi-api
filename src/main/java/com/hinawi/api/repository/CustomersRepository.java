@@ -13,4 +13,6 @@ public interface CustomersRepository extends JpaRepository<Customers,Long> {
 
     @Query("SELECT p FROM Customers p WHERE balance is not null and balance<>0")
     public List<Customers> findBalance();
+
+    List<Customers> findByName(String name);
 }
